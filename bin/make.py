@@ -192,25 +192,32 @@ digraph %s
         else :
             return (u'blue' if u'M'==node.sex else u'red')
 
+    def _other_names(self, node) :
+        other_names = ''
+        if u'person'==node.type and node.other_names :
+            other_names = u', '.join(['%s:%s' % (k,v) for k,v in node.other_names.items()])
+        elif u'company'==node.type and node.full_name :
+            other_names = node.full_name
+        return u'<tr><td>(%s)</td></tr>' % (other_names,) if other_names else u''
+
     def _dot_node(self, node_id) :
         node = Node.all[node_id]
         template = u'''\t%s [shape="%s", color="%s", ''' \
                     u'''label=<<table border="0" cellborder="0">''' \
                     u'''<tr><td>%s%s</td></tr>''' \
+                    u'''%s''' \
                     u'''<tr><td>%s</td></tr>''' \
                     u'''<tr><td>%s</td></tr></table>>];\n'''
 
         portrait = u'../data/person/%s/portrait.png' % (node_id,)
-        if os.path.exists(portrait) :
-            portrait = u'<img src="%s"/>' % portrait
-        else :
-            portrait = u''
+        portrait = u'<img src="%s"/>' % (portrait,) if os.path.exists(portrait) else u''
 
-        return template % (node.name,
+        return template % (node.id,
                            u'box' if u'person'==node.type else u'ellipse',
                            self._node_color(node),
                            node.name,
                            (u'' if node.birth==u'N/A' else u' [%s]'%node.birth),
+                           self._other_names(node),
                            portrait,
                            node.desc.replace(u'\n', u'<br/>'))
 
