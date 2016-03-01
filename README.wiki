@@ -97,11 +97,21 @@ python make.py jpg
 
 要使用上述脚本，你需要事先安装相关的软件（如下）
 
-* Python
+* Python2
 
 因为俺用的是 Python 脚本，所有你需要先安装 python 软件。
 
 Python 有两种版本——python2 和 python3——俺用的是 python2
+
+* PyYAML
+
+这是一个基于 python 开发的软件包，专门用来处理 YAML 格式的文件。
+
+你需要在你的 python 环境中安装该软件包。其官方链接如下：
+
+[http://pyyaml.org/wiki/PyYAML PyYAML 的官网的 wiki]
+
+[https://pypi.python.org/pypi/PyYAML Python 官网的 PYPI]
 
 * Graphviz
 
