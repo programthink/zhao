@@ -126,3 +126,12 @@ Python 有两种版本——python2 和 python3——俺用的是 python2
 《[https://program-think.blogspot.com/2016/02/opensource-review-graphviz.html 开源项目：【自动】绘图工具Graphviz——《太子党关系网络》就是用它制作]》
 
 
+== 致“反对此项目的墙内程序员” ==
+
+本项目上线不到24小时，就收获 363 个 star 兼 88 个 fork——很高兴有这么多人给俺捧场。
+
+但是在[https://github.com/programthink/zhao/issues 本项目的 issue 列表]中也看到好几个反对此项目的程序员（应该都来自墙内），他们担心这个项目导致 GitHub 被 GFW 封杀。
+
+这几年来，类似的言论俺已经看了不少。就好比强盗拿刀杀人，围观者不但没有谴责强盗，反而去谴责卖刀的店家——这就是传说中的“斯德哥尔摩综合症”。
+
+有兴趣的同学，可以看俺之前的博文——《[https://program-think.blogspot.com/2012/06/stockholm-syndrome.html 天朝民众的心理分析：斯德哥尔摩综合症]》
