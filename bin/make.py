@@ -1,13 +1,12 @@
-#!/usr/bin/python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import sys
 import os
 import shutil
 import re
-from StringIO import StringIO
+from io import StringIO
 import yaml
-
 
 
 def _raise_err(format, *args) :
@@ -15,13 +14,9 @@ def _raise_err(format, *args) :
 
 
 def _load_yaml(yaml_file) :
-    print('load: ' + yaml_file)
-    with open(yaml_file, 'r') as f :
+    print(u'load: ' + yaml_file)
+    with open(yaml_file, u'r') as f :
         return yaml.load(f.read())
-
-def _exec(cmd) :
-    print(cmd)
-    return os.system(cmd)
 
 
 
@@ -34,33 +29,32 @@ class Node :
         Node.all = {}
         Node.keys = []
 
-        for node_type in ['person', 'company'] :
-            for node_id in os.listdir('../data/' + node_type) :
-                yaml_file = '../data/%s/%s/brief.yaml' % (node_type, node_id)
-                node_id = node_id.decode('utf-8')
+        for node_type in [u'person', u'company'] :
+            for node_id in os.listdir(u'../data/' + node_type) :
+                yaml_file = u'../data/%s/%s/brief.yaml' % (node_type, node_id)
                 node = Node(_load_yaml(yaml_file), node_id, node_type)
                 if node_id in Node.all :
                     _raise_err(u'Node id conflict: "%s"!', node_id)
 
                 Node.all[node_id] = node
                 Node.keys.append(node_id)
-        print('Node number: %d' % len(Node.all))
+        print(u'Node number: %d' % len(Node.all))
 
 
     def __init__(self, yaml, node_id, type) :
         self.id = node_id
         self.type = type
-        self.name = yaml['name']
-        if 'other_names' in yaml :  # person
-            self.other_names = yaml['other_names']
-        if 'sex' in yaml :  # person
-            self.sex = yaml['sex']
-        if 'full_name' in yaml :  # company
-            self.full_name = yaml['full_name']
-        self.birth = yaml['birth']
-        self.death = yaml['death']
-        self.desc = yaml['desc']
-        self.links = yaml['links']
+        self.name = yaml[u'name']
+        if u'other_names' in yaml :  # person
+            self.other_names = yaml[u'other_names']
+        if u'sex' in yaml :  # person
+            self.sex = yaml[u'sex']
+        if u'full_name' in yaml :  # company
+            self.full_name = yaml[u'full_name']
+        self.birth = yaml[u'birth']
+        self.death = yaml[u'death']
+        self.desc = yaml[u'desc']
+        self.links = yaml[u'links']
 
 
 
@@ -70,26 +64,25 @@ class Relation :
 
     @classmethod
     def init(cls) :
-        for family_id in os.listdir('../data/family/') :
-            family_id = family_id.replace('.yaml', '')
-            yaml_file = '../data/family/%s.yaml' % (family_id,)
-            family_id = family_id.decode('utf-8')
+        for family_id in os.listdir(u'../data/family/') :
+            family_id = family_id.replace(u'.yaml', u'')
+            yaml_file = u'../data/family/%s.yaml' % (family_id,)
             if family_id not in Node.all :
                 _raise_err(u'Invalid family name: "%s"!', family_id)
 
             yaml = _load_yaml(yaml_file)
-            for lst in yaml['relations'] :
+            for lst in yaml[u'relations'] :
                 relation = Relation(lst)
                 Relation.all[relation.name] = relation
                 Relation.keys.append(relation.name)
-        print('Relation number: %d' % len(Relation.all))
+        print(u'Relation number: %d' % len(Relation.all))
 
 
     def __init__(self, lst) :
         self.node_from = lst[0]
         self.node_to = lst[1]
         self.desc = lst[2]
-        self.name = self.node_from + '->' + self.node_to
+        self.name = self.node_from + u'->' + self.node_to
 
         if self.name in Relation.all :
             _raise_err(u'Relation name conflict: "%s"!', self.name)
@@ -106,23 +99,22 @@ class Family :
 
     @classmethod
     def init(cls) :
-        for family_id in os.listdir('../data/family/') :
-            family_id = family_id.replace('.yaml', '')
-            yaml_file = '../data/family/%s.yaml' % (family_id,)
-            family_id = family_id.decode('utf-8')
+        for family_id in os.listdir(u'../data/family/') :
+            family_id = family_id.replace(u'.yaml', u'')
+            yaml_file = u'../data/family/%s.yaml' % (family_id,)
             if family_id not in Node.all :
                 _raise_err(u'Invalid family name: "%s"!', family_id)
 
             family = Family(_load_yaml(yaml_file))
             Family.all[family_id] = family
             Family.keys.append(family_id)
-        print('Family number: %d' % len(Family.all))
+        print(u'Family number: %d' % len(Family.all))
 
 
     def __init__(self, yaml) :
-        self.name = yaml['name']
-        self.inner = yaml['inner']
-        self.outer = yaml['outer']
+        self.name = yaml[u'name']
+        self.inner = yaml[u'inner']
+        self.outer = yaml[u'outer']
         self.members = [self.name] + self.inner + self.outer
 
         for name in self.members :
@@ -133,8 +125,8 @@ class Family :
 
 class Graph :
     def __init__(self, yaml) :
-        self._name = yaml['name']
-        self._families = yaml['families']
+        self._name = yaml[u'name']
+        self._families = yaml[u'families']
         self._families.reverse()
         self._nodes = []
         self._relations = []
@@ -151,16 +143,16 @@ class Graph :
                     self._relations.append(r)
 
 
-    def __unicode__(self) :
+    def dump(self) :
         output = StringIO()
 
         for n in self._nodes :
             output.write(self._dot_node(n))
-        output.write('\n')
+        output.write(u'\n')
 
         for r in self._relations :
             output.write(self._dot_relation(r))
-        output.write('\n')
+        output.write(u'\n')
 
         if len(self._families) > 1 :
             for f in self._families :
@@ -195,22 +187,22 @@ digraph %s
     def _other_names(self, node) :
         other_names = ''
         if u'person'==node.type and node.other_names :
-            other_names = u', '.join(['%s:%s' % (k,v) for k,v in node.other_names.items()])
+            other_names = u', '.join([u'%s:%s' % (k,v) for k,v in node.other_names.items()])
         elif u'company'==node.type and node.full_name :
             other_names = node.full_name
-        return u'<tr><td>(%s)</td></tr>' % (other_names,) if other_names else u''
+        return u'<tr><td>(%s)</td></tr>' % (other_names,) if other_names else ''
 
     def _dot_node(self, node_id) :
         node = Node.all[node_id]
-        template = u'''\t%s [shape="%s", color="%s", ''' \
-                    u'''label=<<table border="0" cellborder="0">''' \
-                    u'''<tr><td>%s%s</td></tr>''' \
-                    u'''%s''' \
-                    u'''<tr><td>%s</td></tr>''' \
-                    u'''<tr><td>%s</td></tr></table>>];\n'''
+        template = u'\t%s [shape="%s", color="%s", ' \
+                    u'label=<<table border="0" cellborder="0">' \
+                    u'<tr><td>%s%s</td></tr>' \
+                    u'%s' \
+                    u'<tr><td>%s</td></tr>' \
+                    u'<tr><td>%s</td></tr></table>>];\n'
 
         portrait = u'../data/person/%s/portrait.png' % (node_id,)
-        portrait = u'<img src="%s"/>' % (portrait,) if os.path.exists(portrait) else u''
+        portrait = u'<img src="%s"/>' % (portrait,) if os.path.exists(portrait) else ''
 
         return template % (node.id,
                            u'box' if u'person'==node.type else u'ellipse',
@@ -226,13 +218,13 @@ digraph %s
         relation = Relation.all[name]
         template = u'''\t%s -> %s [label="%s", style=%s, color="%s"];\n'''
 
-        if re.match(ur'^夫|妻$', relation.desc) :
+        if re.match(u'^夫|妻$', relation.desc) :
             style = u'bold'
-        elif re.match(ur'^父|母$', relation.desc) :
+        elif re.match(u'^父|母$', relation.desc) :
             style = u'solid'
-        elif re.match(ur'^(独|长|次|三|四|五|六|七)?(子|女)$', relation.desc) :
+        elif re.match(u'^(独|长|次|三|四|五|六|七)?(子|女)$', relation.desc) :
             style = u'solid'
-        elif re.match(ur'^.*?(兄|弟|姐|妹)$', relation.desc) :
+        elif re.match(u'^.*?(兄|弟|姐|妹)$', relation.desc) :
             style = u'dashed'
         else :
             style = u'dotted'
@@ -257,7 +249,7 @@ digraph %s
 \t}
 '''
         return template % (family.name, family.name,
-                           ';'.join([name]+family.inner))
+                           u';'.join([name]+family.inner))
 
 
 
@@ -267,43 +259,42 @@ class Builder :
         Relation.init()
         Family.init()
 
-
     def _mkdir(self, name) :
         if os.path.exists(name) :
             shutil.rmtree(name)
         os.mkdir(name)
 
+    def _exec(self, cmd) :
+        print(cmd)
+        return os.system(cmd.encode(u'utf-8'))
 
     def do(self, file_type) :
-        os.chdir('../download/')
-        self._mkdir('dot')
+        os.chdir(u'../download/')
+        self._mkdir(u'dot')
         self._mkdir(file_type)
-
         n = 0
-        for graph in _load_yaml('../data/graph.yaml') :
+        for graph in _load_yaml(u'../data/graph.yaml') :
             n += 1
-            name = '%02d-%s' % (n, graph['name'].encode('utf-8'))
-            dot_file = './dot/%s.dot' % (name,)
-            output_file = './%s/%s.%s' % (file_type, name, file_type)
+            name = u'%02d-%s' % (n, graph[u'name'])
+            dot_file = u'./dot/%s.dot' % (name,)
+            output_file = u'./%s/%s.%s' % (file_type, name, file_type)
 
-            with open(dot_file, 'w') as f :
-                f.write(unicode(Graph(graph)).encode('utf-8'))
+            with open(dot_file, u'wb') as f :
+                f.write(Graph(graph).dump().encode(u'utf-8'))
 
-            cms = 'dot %s -T%s -o%s' % (dot_file, file_type, output_file)
-            if _exec(cms) != 0 :
-                _raise_err(u'Make "%s" failed!' % dot_file)
+            cmd = u'dot "%s" -T%s -o"%s"' % (dot_file, file_type, output_file)
+            if self._exec(cmd) != 0 :
+                _raise_err(u'Make "%s" failed!', dot_file)
         return 0
-
 
 
 if '__main__' == __name__ :
     try :
         if len(sys.argv) != 2 :
-            print('''Usage:\n%s file_type
+            print(u'''Usage:\n%s file_type
 (file_type is pdf or jpg or png or gif or tiff or svg or ps)''' % sys.argv[0])
             sys.exit(0)
-        file_type = sys.argv[1]
-        sys.exit(Builder().do(file_type))
+        sys.exit(Builder().do(sys.argv[1]))
     except Exception as err :
-        print(u'Make abort!\n%s' % unicode(err))
+        print(u'Make abort!\n%s' % err)
         sys.exit(1)
