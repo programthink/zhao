@@ -29,4 +29,4 @@ desc: |
 # 考虑到可信度的问题，首选“维基百科”，其次是“国际权威媒体”。
 # 对于客观事实（比如生卒年月、简历），也可以引用国内网站，比如“百度百科”或“政府网站”。
 links:
-    - https://zh.wikipedia.org/zh-cn/%E4%B9%94%E5%86%A0%E5%8D%8E
+    - https://zh.wikipedia.org/wiki/%E4%B9%94%E5%86%A0%E5%8D%8E
