@@ -14,7 +14,7 @@ other_names:
 sex: M
 
 # birth 必填。填写出生时间，用【4位数年份】表示。未知年份用 N/A 表示。
-birth: N/A
+birth: 1942
 
 # death 可为空。填写死亡时间，用【4位数年份】表示。未知年份用 N/A 表示。尚未死亡则留空。
 death: 
