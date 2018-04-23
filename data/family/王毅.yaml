@@ -8,7 +8,7 @@ name: 王毅
 inner: [钱韦, 钱嘉东]
 
 # outer 表示“外围成员”（通常是非血缘关系引入的成员）
-outer: []
+outer: [周恩来]
 
 # relations 表示“家族成员关系”。使用 YAML 的【list】语法表示。
 # 每一行又是一个 list，包含三个元素，分别表示：[from, to, desc]
@@ -16,3 +16,4 @@ outer: []
 relations:
     - [王毅, 钱韦, 妻]
     - [钱韦, 钱嘉东, 父]
+    - [周恩来, 钱嘉东, 秘书]
